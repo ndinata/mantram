@@ -9,5 +9,6 @@
       "@public/*": ["./public/*"],
       "@/*": ["./src/*"]
     }
-  }
+  },
+  "exclude": ["dist"]
 }
