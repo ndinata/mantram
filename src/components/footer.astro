@@ -1,0 +1,28 @@
+---
+const profileLink = "https://github.com/ndinata";
+const profileEmail = "nicodnt@icloud.com";
+---
+
+<footer class="py-6">
+  <div class="container flex md:px-8">
+    <p
+      class="text-balance text-center text-sm leading-loose text-muted-foreground"
+    >
+      Built by{" "}
+      <a
+        href={profileLink}
+        target="_blank"
+        rel="noreferrer"
+        class="font-medium underline underline-offset-4"
+      >
+        ndinata</a
+      >. For suggestions/corrections, please email me at{" "}
+      <a
+        href={`mailto:${profileEmail}`}
+        class="font-medium underline underline-offset-4"
+      >
+        {profileEmail}</a
+      >.
+    </p>
+  </div>
+</footer>
