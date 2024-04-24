@@ -1,0 +1,38 @@
+name: Deploy to GitHub Pages
+
+on:
+  # Trigger the workflow every time there's a push to the `main` branch
+  push:
+    branches: [main]
+  # Allows to run this workflow manually from the Actions tab on GitHub
+  workflow_dispatch:
+
+# Allow this job to clone the repo and create a page deployment
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Install, build, and upload site
+        uses: withastro/action@v2
+        # with:
+        # path: . # The root location of the Astro project inside the repository.
+        # node-version: 20 # Version of Node used to build the site (default is 20).
+        # package-manager: pnpm@latest # The Node package manager used to install deps and build the site. Automatically detected based on the lockfile.
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
