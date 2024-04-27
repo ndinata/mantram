@@ -32,3 +32,15 @@ import Header from "@/components/header.astro";
     <Footer />
   </body>
 </html>
+
+<script>
+  window
+    .matchMedia("(prefers-color-scheme: dark)")
+    .addEventListener("change", (e) => {
+      if (!("theme" in localStorage)) {
+        document.documentElement.classList[e.matches ? "add" : "remove"](
+          "dark",
+        );
+      }
+    });
+</script>
