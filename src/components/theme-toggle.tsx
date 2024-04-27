@@ -5,28 +5,45 @@ import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuItem,
   DropdownMenuTrigger,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
 } from "@/components/ui/dropdown-menu";
+
+const STORAGE_KEY_THEME = "theme";
 
 export function ThemeToggle() {
   const [open, setOpen] = React.useState(false);
-  const [theme, setThemeState] = React.useState<
-    "theme-light" | "dark" | "system"
-  >("theme-light");
+  const [theme, setThemeState] = React.useState<"light" | "dark" | "system">(
+    () => {
+      if (
+        typeof window !== "undefined" &&
+        localStorage.getItem(STORAGE_KEY_THEME)
+      ) {
+        return localStorage.getItem(STORAGE_KEY_THEME) as "light" | "dark";
+      } else {
+        return "system";
+      }
+    },
+  );
 
-  React.useEffect(() => {
-    const isDarkMode = document.documentElement.classList.contains("dark");
-    setThemeState(isDarkMode ? "dark" : "theme-light");
+  const selectTheme = React.useCallback((newTheme: string) => {
+    if (newTheme === "system") {
+      setThemeState("system");
+      document.documentElement.classList[
+        window.matchMedia("(prefers-color-scheme: dark)").matches
+          ? "add"
+          : "remove"
+      ]("dark");
+      localStorage.removeItem(STORAGE_KEY_THEME);
+    } else {
+      setThemeState(newTheme as "light" | "dark");
+      document.documentElement.classList[
+        newTheme === "dark" ? "add" : "remove"
+      ]("dark");
+      localStorage.setItem(STORAGE_KEY_THEME, newTheme);
+    }
   }, []);
-
-  React.useEffect(() => {
-    const isDark =
-      theme === "dark" ||
-      (theme === "system" &&
-        window.matchMedia("(prefers-color-scheme: dark)").matches);
-    document.documentElement.classList[isDark ? "add" : "remove"]("dark");
-  }, [theme]);
 
   return (
     <DropdownMenu open={open} onOpenChange={setOpen}>
@@ -43,15 +60,11 @@ export function ThemeToggle() {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuItem onClick={() => setThemeState("theme-light")}>
-          Light
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setThemeState("dark")}>
-          Dark
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setThemeState("system")}>
-          System
-        </DropdownMenuItem>
+        <DropdownMenuRadioGroup value={theme} onValueChange={selectTheme}>
+          <DropdownMenuRadioItem value="light">Light</DropdownMenuRadioItem>
+          <DropdownMenuRadioItem value="dark">Dark</DropdownMenuRadioItem>
+          <DropdownMenuRadioItem value="system">System</DropdownMenuRadioItem>
+        </DropdownMenuRadioGroup>
       </DropdownMenuContent>
     </DropdownMenu>
   );
