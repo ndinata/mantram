@@ -1,0 +1,24 @@
+---
+import { getCollection } from "astro:content";
+
+import Hanzi from "@/components/hanzi.astro";
+import { parseMantramText } from "@/lib/parser";
+import MantramPostLayout from "../_post-layout.astro";
+
+export async function getStaticPaths() {
+  const entries = await getCollection("posts");
+  return entries.map((entry) => ({
+    params: { slug: entry.slug },
+    props: { entry },
+  }));
+}
+
+const { entry } = Astro.props;
+const chars = parseMantramText(entry.body.trim());
+---
+
+<MantramPostLayout frontmatter={entry.data}>
+  <div class="flex flex-wrap gap-1.5 gap-y-6">
+    {chars.map((char) => <Hanzi {...char} />)}
+  </div>
+</MantramPostLayout>
