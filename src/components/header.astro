@@ -1,7 +1,11 @@
 ---
+import { getCollection } from "astro:content";
+
 import { HeaderMenu } from "@/components/header-menu";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Button } from "@/components/ui/button";
+
+const allPosts = await getCollection("posts");
 ---
 
 <header
@@ -24,7 +28,7 @@ import { Button } from "@/components/ui/button";
       class="flex flex-1 items-center justify-between space-x-2 md:justify-end"
     >
       <div class="w-full flex-1 md:w-auto md:flex-none">
-        <HeaderMenu client:load />
+        <HeaderMenu client:load posts={allPosts} />
       </div>
 
       <nav class="flex items-center">

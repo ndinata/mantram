@@ -1,4 +1,6 @@
 import { useCallback, useState } from "react";
+import { navigate } from "astro:transitions/client";
+import type { CollectionEntry } from "astro:content";
 
 import { Button } from "./ui/button";
 import {
@@ -10,19 +12,16 @@ import {
   CommandList,
 } from "./ui/command";
 
-// TODO: get list of mantrams from proper source
-const MANTRAMS = [
-  { title: "解結咒", pinyin: "jie jie zhou" },
-  { title: "往生淨土神咒", pinyin: "wangsheng jingtu shen zhou" },
-] as const;
+type Props = {
+  posts: CollectionEntry<"posts">[];
+};
 
-export function HeaderMenu() {
+export function HeaderMenu({ posts }: Props) {
   const [open, setOpen] = useState(false);
 
   const selectItem = useCallback((value: string) => {
-    // TODO
-    // console.log(`item selected: ${value}`);
     setOpen(false);
+    navigate(`/posts/${value}`);
   }, []);
 
   return (
@@ -40,14 +39,14 @@ export function HeaderMenu() {
         <CommandList>
           <CommandEmpty>No results found.</CommandEmpty>
           <CommandGroup heading="Mantrams">
-            {MANTRAMS.map((mantram) => (
+            {posts.map((mantram, i) => (
               <CommandItem
-                key={mantram.pinyin}
-                value={mantram.pinyin}
+                key={i}
+                value={mantram.slug}
                 onSelect={selectItem}
                 className="text-base"
               >
-                {mantram.title} ({mantram.pinyin})
+                {mantram.data.title} ({mantram.data.subtitle})
               </CommandItem>
             ))}
           </CommandGroup>
