@@ -1,4 +1,5 @@
 ---
+import { format } from "date-fns";
 import type { CollectionEntry } from "astro:content";
 
 import { parseHanziCombo } from "@/lib/parser";
@@ -15,6 +16,9 @@ const titleChars = parseHanziCombo({
   subs: frontmatter.subtitle,
   pinyins: frontmatter.titlePinyin,
 });
+
+const publishedDateStr = format(frontmatter.publishDate, "dd MMM yyyy");
+const lastUpdatedDateStr = format(frontmatter.lastUpdatedDate, "dd MMM yyyy");
 ---
 
 <RootLayout title={frontmatter.title}>
@@ -37,14 +41,10 @@ const titleChars = parseHanziCombo({
 
     <footer class="mb-4 mt-12 flex flex-col gap-1.5">
       <p class="text-xs text-muted-foreground">
-        Published: <span class="font-medium"
-          >{frontmatter.publishDate.toLocaleDateString()}</span
-        >
+        Published: <span class="font-medium">{publishedDateStr}</span>
       </p>
       <p class="text-xs text-muted-foreground">
-        Last updated: <span class="font-medium"
-          >{frontmatter.lastUpdatedDate.toLocaleDateString()}</span
-        >
+        Last updated: <span class="font-medium">{lastUpdatedDateStr}</span>
       </p>
     </footer>
   </article>
