@@ -1,0 +1,37 @@
+---
+import { getCollection } from "astro:content";
+import { format } from "date-fns";
+
+const allPosts = await getCollection("posts");
+---
+
+<p class="mb-3 self-end text-sm text-muted-foreground">
+  Total: {allPosts.length} post{allPosts.length === 1 ? "" : "s"}
+</p>
+<ul class="flex flex-col gap-3">
+  {
+    allPosts.map((post) => (
+      <li>
+        <a href={`/posts/${post.slug}`}>
+          <div class="flex flex-col gap-2.5 rounded-md border border-border p-4">
+            <p class="text-lg">
+              {post.data.title}{" "}
+              <span class="text-sm font-normal">({post.data.subtitle})</span>
+            </p>
+
+            <div class="flex items-center justify-between">
+              <p class="text-muted-foreground">
+                {post.body.trim().split("\n\n")[0].split("\n")[1].slice(0, 10)}
+                {"..."}
+              </p>
+
+              <span class="text-xs text-muted-foreground">
+                {format(post.data.publishDate, "dd MMM yyyy")}
+              </span>
+            </div>
+          </div>
+        </a>
+      </li>
+    ))
+  }
+</ul>

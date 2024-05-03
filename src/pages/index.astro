@@ -1,12 +1,10 @@
 ---
+import PostList from "@/components/post-list.astro";
 import RootLayout from "./_root-layout.astro";
 ---
 
 <RootLayout>
-  <section
-    class="mt-[50%] flex flex-col items-center justify-center md:mt-[20%]"
-  >
-    <span class="text-4xl">🚧</span>
-    <p class="mt-2 text-center text-xl font-medium">In Progress</p>
+  <section class="flex flex-col p-6">
+    <PostList />
   </section>
 </RootLayout>
