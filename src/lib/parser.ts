@@ -1,3 +1,10 @@
+enum Punc {
+  PERIOD = "。",
+  COMMA = "，",
+  DUNCOMMA = "、",
+  COLON = "：",
+}
+
 type Hanzi = {
   type: "hanzi";
   char: string;
@@ -5,15 +12,22 @@ type Hanzi = {
   pinyin: string | undefined;
 };
 
-type Punc = {
+type Punctuation = {
   type: "punc";
-  char: "。" | "，" | "：";
+  char: Punc;
 };
 
-type Character = Hanzi | Punc;
+function isPunc(str: string): str is Punc {
+  return (
+    str === Punc.PERIOD ||
+    str === Punc.COMMA ||
+    str === Punc.DUNCOMMA ||
+    str === Punc.COLON
+  );
+}
 
 /** Returns a list of parsed characters (hanzi/punctuation) from the mantram text. */
-export function parseMantramText(str: string): Character[] {
+export function parseMantramText(str: string): (Hanzi | Punctuation)[] {
   return str.split("\n\n").flatMap((line) => {
     const lineTriple = line.split("\n");
 
@@ -25,7 +39,7 @@ export function parseMantramText(str: string): Character[] {
 
     let i = 0;
     return hanzis.split("").map((hanzi) => {
-      if (hanzi === "。" || hanzi === "，" || hanzi === "：") {
+      if (isPunc(hanzi)) {
         return {
           type: "punc",
           char: hanzi,
