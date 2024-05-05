@@ -18,7 +18,7 @@ const chars = parseMantramText(entry.body.trim());
 ---
 
 <MantramPostLayout frontmatter={entry.data}>
-  <div class="flex flex-wrap gap-1.5 gap-y-6 md:w-3/5 md:self-center">
+  <div class="flex flex-wrap gap-1.5 gap-y-5 md:w-[58ch] md:self-center">
     {chars.map((char) => <Hanzi {...char} />)}
   </div>
 </MantramPostLayout>
