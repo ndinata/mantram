@@ -3,6 +3,9 @@ enum Punc {
   COMMA = "，",
   DUNCOMMA = "、",
   COLON = "：",
+  EXCL = "！",
+  LEFTPAREN = "（",
+  RIGHTPAREN = "）",
 }
 
 type Hanzi = {
@@ -22,7 +25,10 @@ function isPunc(str: string): str is Punc {
     str === Punc.PERIOD ||
     str === Punc.COMMA ||
     str === Punc.DUNCOMMA ||
-    str === Punc.COLON
+    str === Punc.COLON ||
+    str === Punc.EXCL ||
+    str === Punc.LEFTPAREN ||
+    str === Punc.RIGHTPAREN
   );
 }
 
@@ -31,18 +37,25 @@ export function parseMantramText(str: string): (Hanzi | Punctuation)[] {
   return str.split("\n\n").flatMap((line) => {
     const lineTriple = line.split("\n");
 
-    const subtitles = lineTriple[0].split(/\.?,?:?\s|\./).filter(Boolean);
+    const subtitles = lineTriple[0].split(/\.?,?:?!?\s|\.|!/).filter(Boolean);
     const hanzis = lineTriple[1];
     const pinyins = lineTriple[2]
-      ? lineTriple[2].split(/\.?,?:?\s|\./).filter(Boolean)
+      ? lineTriple[2].split(/\.?,?:?!?\s|\.|!/).filter(Boolean)
       : undefined;
 
     let i = 0;
+    let inParenBlock = false;
     return hanzis.split("").map((hanzi) => {
-      if (isPunc(hanzi)) {
+      if (hanzi === Punc.LEFTPAREN) {
+        inParenBlock = true;
+      } else if (hanzi === Punc.RIGHTPAREN) {
+        inParenBlock = false;
+      }
+
+      if (inParenBlock || isPunc(hanzi)) {
         return {
           type: "punc",
-          char: hanzi,
+          char: hanzi as Punc,
         };
       } else {
         return {
