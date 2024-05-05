@@ -3,7 +3,6 @@ import { getCollection } from "astro:content";
 
 import { HeaderMenu } from "@/components/header-menu";
 import { ThemeToggle } from "@/components/theme-toggle";
-import { Button } from "@/components/ui/button";
 
 const allPosts = await getCollection("posts");
 ---
@@ -12,17 +11,14 @@ const allPosts = await getCollection("posts");
   class="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur"
 >
   <div class="container flex h-14 max-w-screen-2xl items-center md:px-8">
-    <Button asChild>
-      <a
-        class="mr-10 text-xl font-bold leading-none decoration-primary underline-offset-[6px] hover:underline md:text-2xl"
-        href="/"
+    <a
+      class="mr-10 text-xl font-bold leading-none decoration-primary underline-offset-[6px] hover:underline md:text-2xl"
+      href="/"
+    >
+      mantram<span class="text-xs font-normal text-muted-foreground md:text-sm"
+        >.blog</span
       >
-        mantram<span
-          class="text-xs font-normal text-muted-foreground md:text-sm"
-          >.blog</span
-        >
-      </a>
-    </Button>
+    </a>
 
     <div
       class="flex flex-1 items-center justify-between space-x-2 md:justify-end"
