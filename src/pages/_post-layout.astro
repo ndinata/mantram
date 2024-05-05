@@ -21,7 +21,7 @@ const publishedDateStr = format(frontmatter.publishDate, "dd MMM yyyy");
 const lastUpdatedDateStr = format(frontmatter.lastUpdatedDate, "dd MMM yyyy");
 ---
 
-<RootLayout title={frontmatter.title}>
+<RootLayout title={`Mantram — ${frontmatter.title}`}>
   <article class="flex flex-col px-6 py-4">
     <div class="mb-8 flex flex-wrap gap-1.5 self-center md:mb-12">
       {
