@@ -1,17 +1,14 @@
 ---
-import { Button } from "@/components/ui/button";
 import RootLayout from "./_root-layout.astro";
 ---
 
 <RootLayout title="Mantram — Not Found">
   <section class="mt-[50%] flex flex-col items-center md:mt-[20%]">
     <p class="mb-5 text-xl font-semibold md:text-2xl">Page not found.</p>
-    <Button className="underline" asChild>
-      <a
-        href="/"
-        class="text-base text-primary underline decoration-primary underline-offset-4 md:text-lg"
-        >Go to homepage</a
-      >
-    </Button>
+    <a
+      href="/"
+      class="text-base text-primary underline decoration-primary underline-offset-4 md:text-lg"
+      >Go to homepage</a
+    >
   </section>
 </RootLayout>
