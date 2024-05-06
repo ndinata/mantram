@@ -13,6 +13,8 @@ const postsCollection = defineCollection({
     publishDate: z.date(),
     /** Last time the mantram was updated. */
     lastUpdatedDate: z.date(),
+    /** Optional key useful for e.g. ordering of posts. */
+    priority: z.number().optional().default(0),
     /** Additional context to the mantram. */
     context: z
       .object({

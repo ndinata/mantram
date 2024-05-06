@@ -4,6 +4,7 @@ subtitle: "kuan she yin phu sat ciu khu cen cing"
 titlePinyin: "guān shì yīn pú sà jiù kǔ zhēn jīng"
 publishDate: 2024-05-05
 lastUpdatedDate: 2024-05-05
+priority: 10
 ---
 
 na mo ciu khu ciu nan kuan she yin phu sat. pai chien wan yi fu.
