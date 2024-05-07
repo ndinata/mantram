@@ -7,18 +7,34 @@ import MantramPostLayout from "../_post-layout.astro";
 
 export async function getStaticPaths() {
   const entries = await getCollection("posts");
-  return entries.map((entry) => ({
+  return entries.map((entry, index) => ({
     params: { slug: entry.slug },
-    props: { entry },
+    props: {
+      entry,
+      prev:
+        index > 0
+          ? {
+              title: entries[index - 1].data.title,
+              sub: entries[index - 1].data.subtitle,
+              slug: entries[index - 1].slug,
+            }
+          : undefined,
+      next:
+        index < entries.length - 1
+          ? {
+              title: entries[index + 1].data.title,
+              sub: entries[index + 1].data.subtitle,
+              slug: entries[index + 1].slug,
+            }
+          : undefined,
+    },
   }));
 }
 
-const { entry } = Astro.props;
+const { entry, prev, next } = Astro.props;
 const chars = parseMantramText(entry.body.trim());
 ---
 
-<MantramPostLayout frontmatter={entry.data}>
-  <div class="flex flex-wrap gap-1.5 gap-y-5 md:w-[58ch] md:self-center">
-    {chars.map((char) => <Hanzi {...char} />)}
-  </div>
+<MantramPostLayout frontmatter={entry.data} prev={prev} next={next}>
+  {chars.map((char) => <Hanzi {...char} />)}
 </MantramPostLayout>

@@ -2,14 +2,23 @@
 import { format } from "date-fns";
 import type { CollectionEntry } from "astro:content";
 
+import PostPager from "@/components/post-pager.astro";
 import { parseHanziCombo } from "@/lib/parser";
 import RootLayout from "./_root-layout.astro";
 
-type Props = {
-  frontmatter: CollectionEntry<"posts">["data"];
+export type NeighbourPost = {
+  title: CollectionEntry<"posts">["data"]["title"];
+  sub: CollectionEntry<"posts">["data"]["subtitle"];
+  slug: CollectionEntry<"posts">["slug"];
 };
 
-const { frontmatter } = Astro.props;
+type Props = {
+  frontmatter: CollectionEntry<"posts">["data"];
+  prev: NeighbourPost | undefined;
+  next: NeighbourPost | undefined;
+};
+
+const { frontmatter, prev, next } = Astro.props;
 
 const titleChars = parseHanziCombo({
   hanzis: frontmatter.title,
@@ -22,32 +31,38 @@ const lastUpdatedDateStr = format(frontmatter.lastUpdatedDate, "dd MMM yyyy");
 ---
 
 <RootLayout title={`Mantram — ${frontmatter.title}`}>
-  <article class="flex flex-col px-6 py-4">
-    <div class="mb-12 flex flex-wrap gap-1.5 self-center">
-      {
-        titleChars.map(({ char, sub, pinyin }) => (
-          <div class="flex flex-col items-center">
-            <span>{pinyin || sub}</span>
-            <span class="text-2xl font-normal text-muted-foreground">
-              {char}
-            </span>
-            {!!pinyin && <span class="text-sm">{sub}</span>}
-          </div>
-        ))
-      }
+  <article class="flex w-full flex-1 flex-col justify-between gap-12 p-6">
+    <div class="flex flex-col">
+      <div class="mb-12 flex flex-wrap gap-1.5 self-center">
+        {
+          titleChars.map(({ char, sub, pinyin }) => (
+            <div class="flex flex-col items-center">
+              <span>{pinyin || sub}</span>
+              <span class="text-2xl font-normal text-muted-foreground">
+                {char}
+              </span>
+              {!!pinyin && <span class="text-sm">{sub}</span>}
+            </div>
+          ))
+        }
+      </div>
+
+      <div class="flex flex-wrap gap-1.5 gap-y-4 md:w-[58ch] md:self-center">
+        <slot />
+      </div>
     </div>
 
-    <slot />
+    <footer class="flex w-full flex-col gap-6 md:w-[58ch] md:self-center">
+      <div class="flex flex-col gap-1.5 md:items-center">
+        <p class="text-xs text-muted-foreground">
+          Published: <span class="font-medium">{publishedDateStr}</span>
+        </p>
+        <p class="text-xs text-muted-foreground">
+          Last updated: <span class="font-medium">{lastUpdatedDateStr}</span>
+        </p>
+      </div>
 
-    <footer
-      class="mb-4 mt-12 flex flex-col gap-1.5 md:mt-20 md:items-center md:self-center"
-    >
-      <p class="text-xs text-muted-foreground">
-        Published: <span class="font-medium">{publishedDateStr}</span>
-      </p>
-      <p class="text-xs text-muted-foreground">
-        Last updated: <span class="font-medium">{lastUpdatedDateStr}</span>
-      </p>
+      <PostPager prev={prev} next={next} />
     </footer>
   </article>
 </RootLayout>

@@ -1,0 +1,45 @@
+---
+import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
+
+import { buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import type { NeighbourPost } from "@/pages/_post-layout.astro";
+
+type Props = {
+  prev: NeighbourPost | undefined;
+  next: NeighbourPost | undefined;
+};
+
+const { prev, next } = Astro.props;
+---
+
+<div class="flex w-full items-center justify-between self-stretch">
+  {
+    prev && (
+      <a
+        href={`/posts/${prev.slug}`}
+        class={cn(
+          buttonVariants({ variant: "outline" }),
+          "max-w-40 pl-3 font-normal md:max-w-fit",
+        )}
+      >
+        <ChevronLeftIcon className="mr-2 h-4 w-4 shrink-0" />
+        <span class="overflow-hidden text-ellipsis">{prev.title}</span>
+      </a>
+    )
+  }
+  {
+    next && (
+      <a
+        href={`/posts/${next.slug}`}
+        class={cn(
+          buttonVariants({ variant: "outline" }),
+          "ml-auto max-w-40 pr-3 font-normal md:max-w-fit",
+        )}
+      >
+        <span class="overflow-hidden text-ellipsis">{next.title}</span>
+        <ChevronRightIcon className="ml-2 h-4 w-4 shrink-0" />
+      </a>
+    )
+  }
+</div>
