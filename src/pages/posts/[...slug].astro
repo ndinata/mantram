@@ -1,12 +1,11 @@
 ---
-import { getCollection } from "astro:content";
-
 import Hanzi from "@/components/hanzi.astro";
 import { parseMantramText } from "@/lib/parser";
+import { getPostsCollectionByPriority } from "@/lib/posts";
 import MantramPostLayout from "../_post-layout.astro";
 
 export async function getStaticPaths() {
-  const entries = await getCollection("posts");
+  const entries = await getPostsCollectionByPriority();
   return entries.map((entry, index) => ({
     params: { slug: entry.slug },
     props: {

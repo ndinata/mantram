@@ -1,10 +1,9 @@
 ---
-import { getCollection } from "astro:content";
 import { format } from "date-fns";
 
-const allPosts = (await getCollection("posts")).toSorted((a, b) => {
-  return b.data.priority - a.data.priority;
-});
+import { getPostsCollectionByPriority } from "@/lib/posts";
+
+const allPosts = await getPostsCollectionByPriority();
 ---
 
 <p class="mb-3 self-end text-sm text-muted-foreground">
