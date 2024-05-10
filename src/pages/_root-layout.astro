@@ -1,6 +1,8 @@
 ---
 import "@/styles/global.css";
 
+import { ViewTransitions } from "astro:transitions";
+
 import Footer from "@/components/footer.astro";
 import Header from "@/components/header.astro";
 
@@ -18,18 +20,49 @@ const { title = "Mantram" } = Astro.props;
     <meta name="viewport" content="width=device-width" />
     <meta name="generator" content={Astro.generator} />
     <title>{title}</title>
+
+    <ViewTransitions />
+
+    {
+      /**
+       * This script sets the page's theme depending on whether the theme is set
+       * in localstorage. If not, follow the device's theme.
+       */
+    }
     <script is:inline>
-      if (
-        localStorage.getItem("theme") === "dark" ||
-        (!("theme" in localStorage) &&
-          window.matchMedia("(prefers-color-scheme: dark)").matches)
-      ) {
-        document.documentElement.classList.add("dark");
-      } else {
-        document.documentElement.classList.remove("dark");
+      function setDarkClass(doc) {
+        if (
+          localStorage.getItem("theme") === "dark" ||
+          (!("theme" in localStorage) &&
+            window.matchMedia("(prefers-color-scheme: dark)").matches)
+        ) {
+          doc.documentElement.classList.add("dark");
+        } else {
+          doc.documentElement.classList.remove("dark");
+        }
       }
+
+      setDarkClass(document);
+
+      document.addEventListener("astro:before-swap", (e) => {
+        setDarkClass(e.newDocument);
+      });
+    </script>
+
+    {/* This script listens and reacts to the device/OS's theme changes. */}
+    <script>
+      window
+        .matchMedia("(prefers-color-scheme: dark)")
+        .addEventListener("change", (e) => {
+          if (!("theme" in localStorage)) {
+            document.documentElement.classList[e.matches ? "add" : "remove"](
+              "dark",
+            );
+          }
+        });
     </script>
   </head>
+
   <body class="relative flex min-h-screen flex-col bg-background">
     <Header />
     <main class="flex flex-1">
@@ -38,15 +71,3 @@ const { title = "Mantram" } = Astro.props;
     <Footer />
   </body>
 </html>
-
-<script>
-  window
-    .matchMedia("(prefers-color-scheme: dark)")
-    .addEventListener("change", (e) => {
-      if (!("theme" in localStorage)) {
-        document.documentElement.classList[e.matches ? "add" : "remove"](
-          "dark",
-        );
-      }
-    });
-</script>

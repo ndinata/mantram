@@ -6,4 +6,7 @@ import { defineConfig } from "astro/config";
 export default defineConfig({
   integrations: [react(), tailwind({ applyBaseStyles: false })],
   site: "https://mantram.blog",
+  prefetch: {
+    prefetchAll: false,
+  },
 });
