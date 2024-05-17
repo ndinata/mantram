@@ -8,7 +8,7 @@ priority: 18
 ---
 
 na mo ta pei kuan she yin phu sa.
-南無大悲觀世音菩薩。（3x）
+南無大悲觀世音菩薩。（3x）<br/>
 
 na mo ho la ta na to la ye ye. na mo oh li ye. po lu cie ti suo po la ye.
 南無喝囉怛那哆囉夜耶。南無阿唎耶。婆盧羯帝爍缽囉耶。

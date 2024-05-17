@@ -8,6 +8,8 @@ enum Punc {
   RIGHTPAREN = "）",
 }
 
+const LINEBR_TAG = "<br/>";
+
 type Hanzi = {
   type: "hanzi";
   char: string;
@@ -18,6 +20,10 @@ type Hanzi = {
 type Punctuation = {
   type: "punc";
   char: Punc;
+};
+
+type Linebreak = {
+  type: "linebr";
 };
 
 function isPunc(str: string): str is Punc {
@@ -33,7 +39,9 @@ function isPunc(str: string): str is Punc {
 }
 
 /** Returns a list of parsed characters (hanzi/punctuation) from the mantram text. */
-export function parseMantramText(str: string): (Hanzi | Punctuation)[] {
+export function parseMantramText(
+  str: string,
+): (Hanzi | Punctuation | Linebreak)[] {
   return str.split("\n\n").flatMap((line) => {
     const lineTriple = line.split("\n");
 
@@ -44,28 +52,48 @@ export function parseMantramText(str: string): (Hanzi | Punctuation)[] {
       : undefined;
 
     let i = 0;
+    let inLineBrBlock = false;
     let inParenBlock = false;
-    return hanzis.split("").map((hanzi) => {
-      if (hanzi === Punc.LEFTPAREN) {
-        inParenBlock = true;
-      } else if (hanzi === Punc.RIGHTPAREN) {
-        inParenBlock = false;
-      }
+    let res = hanzis
+      .split("")
+      .map((hanzi) => {
+        // NOTE: currently ALL `<tag_name>` tags are assumed to be linebreak tags.
+        if (hanzi === LINEBR_TAG[0]) {
+          inLineBrBlock = true;
+          return null;
+        } else if (hanzi === LINEBR_TAG[LINEBR_TAG.length - 1]) {
+          inLineBrBlock = false;
+          return {
+            type: "linebr",
+          };
+        }
+        if (inLineBrBlock) {
+          return null;
+        }
 
-      if (inParenBlock || isPunc(hanzi)) {
-        return {
-          type: "punc",
-          char: hanzi as Punc,
-        };
-      } else {
-        return {
-          type: "hanzi",
-          char: hanzi,
-          sub: subtitles[pinyins ? i : i++],
-          pinyin: pinyins ? pinyins[i++] : undefined,
-        };
-      }
-    });
+        if (hanzi === Punc.LEFTPAREN) {
+          inParenBlock = true;
+        } else if (hanzi === Punc.RIGHTPAREN) {
+          inParenBlock = false;
+        }
+
+        if (inParenBlock || isPunc(hanzi)) {
+          return {
+            type: "punc",
+            char: hanzi as Punc,
+          };
+        } else {
+          return {
+            type: "hanzi",
+            char: hanzi,
+            sub: subtitles[pinyins ? i : i++],
+            pinyin: pinyins ? pinyins[i++] : undefined,
+          };
+        }
+      })
+      .filter(Boolean) as (Hanzi | Punctuation | Linebreak)[];
+
+    return res;
   });
 }
 

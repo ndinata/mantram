@@ -35,5 +35,13 @@ const chars = parseMantramText(entry.body.trim());
 ---
 
 <MantramPostLayout frontmatter={entry.data} prev={prev} next={next}>
-  {chars.map((char) => <Hanzi {...char} />)}
+  {
+    chars.map((char) =>
+      char.type === "linebr" ? (
+        <div class="flex w-full" />
+      ) : (
+        <Hanzi {...char} />
+      ),
+    )
+  }
 </MantramPostLayout>
