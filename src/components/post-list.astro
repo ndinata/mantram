@@ -1,6 +1,4 @@
 ---
-import { format } from "date-fns";
-
 import { getPostsCollectionByPriority } from "@/lib/posts";
 
 const allPosts = await getPostsCollectionByPriority();
@@ -9,26 +7,20 @@ const allPosts = await getPostsCollectionByPriority();
 <p class="mb-3 self-end text-sm text-muted-foreground">
   Total: {allPosts.length} post{allPosts.length === 1 ? "" : "s"}
 </p>
-<ul class="flex flex-col gap-3">
+<ul class="grid grid-cols-2 gap-3">
   {
     allPosts.map((post) => (
       <li>
         <a href={`/posts/${post.slug}`}>
-          <div class="flex flex-col gap-2.5 rounded-md border border-border p-4">
-            <p class="text-lg">
-              {post.data.title}{" "}
-              <span class="text-sm font-normal">({post.data.subtitle})</span>
-            </p>
-
-            <div class="flex items-center justify-between">
-              <p class="text-muted-foreground">
-                {post.body.trim().split("\n\n")[0].split("\n")[1].slice(0, 10)}
-                {"..."}
-              </p>
-
-              <span class="text-xs text-muted-foreground">
-                {format(post.data.publishDate, "dd MMM yyyy")}
+          <div class="flex h-full rounded-lg border bg-card px-3 py-4 text-card-foreground shadow-sm hover:bg-accent hover:text-accent-foreground">
+            <div class="flex flex-1 flex-col items-center justify-center gap-1 text-center">
+              {!!post.data.titlePinyin && (
+                <span class="text-xs md:text-sm">{post.data.titlePinyin}</span>
+              )}
+              <span class="text-muted-foreground md:text-lg">
+                {post.data.title}
               </span>
+              <span class="text-sm md:text-base">{post.data.subtitle}</span>
             </div>
           </div>
         </a>
