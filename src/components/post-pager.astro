@@ -25,7 +25,9 @@ const { prev, next } = Astro.props;
         )}
       >
         <ChevronLeftIcon className="mr-2 h-4 w-4 shrink-0" />
-        <span class="overflow-hidden text-ellipsis">{prev.title}</span>
+        <span class="overflow-hidden text-ellipsis">
+          {prev.number}. {prev.title}
+        </span>
       </a>
     )
   }
@@ -39,7 +41,9 @@ const { prev, next } = Astro.props;
           "ml-auto max-w-40 pr-3 font-normal md:max-w-fit",
         )}
       >
-        <span class="overflow-hidden text-ellipsis">{next.title}</span>
+        <span class="overflow-hidden text-ellipsis">
+          {next.number}. {next.title}
+        </span>
         <ChevronRightIcon className="ml-2 h-4 w-4 shrink-0" />
       </a>
     )
