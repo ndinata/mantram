@@ -11,7 +11,7 @@ const { type, char, sub, pinyin } = Astro.props;
 
 {
   type === "hanzi" ? (
-    <div class="flex flex-col items-center">
+    <div class="flex flex-col items-center md:text-lg">
       <span>{pinyin || sub}</span>
       <span class="text-muted-foreground">{char}</span>
       {!!pinyin && <span class="text-sm">{sub}</span>}
