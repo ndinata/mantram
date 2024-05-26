@@ -26,7 +26,7 @@ const { prev, next } = Astro.props;
       >
         <ChevronLeftIcon className="mr-2 h-4 w-4 shrink-0" />
         <span class="overflow-hidden text-ellipsis">
-          {prev.number}. {prev.title}
+          {prev.position}. {prev.title}
         </span>
       </a>
     )
@@ -42,7 +42,7 @@ const { prev, next } = Astro.props;
         )}
       >
         <span class="overflow-hidden text-ellipsis">
-          {next.number}. {next.title}
+          {next.position}. {next.title}
         </span>
         <ChevronRightIcon className="ml-2 h-4 w-4 shrink-0" />
       </a>

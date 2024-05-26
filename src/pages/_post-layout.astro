@@ -7,7 +7,7 @@ import { parseHanziCombo } from "@/lib/parser";
 import RootLayout from "./_root-layout.astro";
 
 export type NeighbourPost = {
-  number: number;
+  position: string;
   title: CollectionEntry<"posts">["data"]["title"];
   sub: CollectionEntry<"posts">["data"]["subtitle"];
   slug: CollectionEntry<"posts">["slug"];
@@ -15,12 +15,12 @@ export type NeighbourPost = {
 
 type Props = {
   frontmatter: CollectionEntry<"posts">["data"];
-  currNumber: number;
+  position: string;
   prev: NeighbourPost | undefined;
   next: NeighbourPost | undefined;
 };
 
-const { frontmatter, currNumber, prev, next } = Astro.props;
+const { frontmatter, position, prev, next } = Astro.props;
 
 const titleChars = parseHanziCombo({
   hanzis: frontmatter.title,
@@ -37,7 +37,7 @@ const lastUpdatedDateStr = format(frontmatter.lastUpdatedDate, "dd MMM yyyy");
     <div class="flex flex-col">
       <div class="mb-12 flex flex-wrap gap-1.5 self-center">
         <div class="mr-3 flex flex-col justify-center">
-          <span class="text-lg">{currNumber}.</span>
+          <span class="text-lg">{position}.</span>
         </div>
         {
           titleChars.map(({ char, sub, pinyin }) => (

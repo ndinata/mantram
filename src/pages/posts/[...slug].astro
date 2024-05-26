@@ -10,11 +10,10 @@ export async function getStaticPaths() {
     params: { slug: entry.slug },
     props: {
       entry,
-      currNumber: index + 1,
       prev:
         index > 0
           ? {
-              number: index,
+              position: entries[index - 1].position,
               title: entries[index - 1].data.title,
               sub: entries[index - 1].data.subtitle,
               slug: entries[index - 1].slug,
@@ -23,7 +22,7 @@ export async function getStaticPaths() {
       next:
         index < entries.length - 1
           ? {
-              number: index + 2,
+              position: entries[index + 1].position,
               title: entries[index + 1].data.title,
               sub: entries[index + 1].data.subtitle,
               slug: entries[index + 1].slug,
@@ -33,13 +32,13 @@ export async function getStaticPaths() {
   }));
 }
 
-const { entry, currNumber, prev, next } = Astro.props;
+const { entry, prev, next } = Astro.props;
 const chars = parseMantramText(entry.body.trim());
 ---
 
 <MantramPostLayout
   frontmatter={entry.data}
-  currNumber={currNumber}
+  position={entry.position}
   prev={prev}
   next={next}
 >
