@@ -21,8 +21,8 @@ export async function getPostsCollectionByPriority(
  */
 function adjustPosition(index: number): string {
   switch (index + 1) {
-    // case 4:
-    //   return "3b";
+    case 4:
+      return "3b";
     default:
       return (index + 1).toString();
   }
