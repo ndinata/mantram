@@ -7,6 +7,9 @@ lastUpdatedDate: 2024-05-31
 priority: 18
 ---
 
+po jo po luo mi tuo sin cing.
+般若波羅蜜多心經。<br/>
+
 kuan ce cai phu sat. sing sen po jo po luo mi tuo she.
 觀自在菩薩。行深般若波羅蜜多時。
 
