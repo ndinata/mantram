@@ -45,7 +45,7 @@ const chars = parseMantramText(entry.body.trim());
   {
     chars.map((char) =>
       char.type === "linebr" ? (
-        <div class="flex h-3 w-full" />
+        <div class="flex h-1 w-full" />
       ) : (
         <Hanzi {...char} />
       ),
