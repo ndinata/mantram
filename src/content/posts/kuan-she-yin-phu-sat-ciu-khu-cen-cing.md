@@ -3,17 +3,17 @@ title: "觀世音菩薩救苦真經"
 subtitle: "kuan she yin phu sat ciu khu cen cing"
 titlePinyin: "guān shì yīn pú sà jiù kǔ zhēn jīng"
 publishDate: 2024-05-05
-lastUpdatedDate: 2024-05-05
+lastUpdatedDate: 2024-06-01
 priority: 10
 ---
 
-na mo ciu khu ciu nan kuan she yin phu sat. pai chien wan yi fu.
+na mo ciu khu ciu nan kuan she yin phu sat. pai chien wan yi fo.
 南無救苦救難觀世音菩薩。百千萬億佛。
 
-heng ho sha shu fu. wu liang kung te fu.
+heng he sha shu fo. u liang kung te fo.
 恒河沙數佛。無量功德佛。
 
-fu kao a nan yen: cih cing ta sheng, neng ciu yi shiu.
+fo kao a nan yen: cih cing ta sheng, neng ciu yi shiu.
 佛告阿難言：此經大聖，能救獄囚。
 
 neng ciu cung ping, neng ciu chien cai pai nan khu.
@@ -22,7 +22,7 @@ neng ciu cung ping, neng ciu chien cai pai nan khu.
 juo jen sung te yi chien pien, yi shen li khu nan. sung te yi wan pien, he cia li khu nan.
 若人誦得一千遍，一身離苦難。誦得一萬遍，合家離苦難。
 
-na mo fu li wei, na mo fu li hu. she jen wu ek sin, ling jen shen te tu.
+na mo fo li wei, na mo fo li hu. she jen u e sin, ling jen shen te tu.
 南無佛力威，南無佛力護。使人無惡心，令人身得渡。
 
 hui kuang phu sat, hui shan phu sat. a nou ta thien wang, ceng tien phu sat.
