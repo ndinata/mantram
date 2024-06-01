@@ -47,10 +47,12 @@ export function parseMantramText(
   return str.split("\n\n").flatMap((line) => {
     const lineTriple = line.split("\n");
 
-    const subtitles = lineTriple[0].split(/\.?,?:?!?\s|\.|!/).filter(Boolean);
+    const subtitles = lineTriple[0]
+      .split(/\.?,?:?!?\s|\.|!|:|\?/)
+      .filter(Boolean);
     const hanzis = lineTriple[1];
     const pinyins = lineTriple[2]
-      ? lineTriple[2].split(/\.?,?:?!?\s|\.|!/).filter(Boolean)
+      ? lineTriple[2].split(/\.?,?:?!?\s|\.|!|:|\?/).filter(Boolean)
       : undefined;
 
     let i = 0;
