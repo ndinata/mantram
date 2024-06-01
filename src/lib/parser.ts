@@ -6,6 +6,7 @@ enum Punc {
   EXCL = "！",
   LEFTPAREN = "（",
   RIGHTPAREN = "）",
+  QUESTION = "？",
 }
 
 const LINEBR_TAG = "<br/>";
@@ -34,7 +35,8 @@ function isPunc(str: string): str is Punc {
     str === Punc.COLON ||
     str === Punc.EXCL ||
     str === Punc.LEFTPAREN ||
-    str === Punc.RIGHTPAREN
+    str === Punc.RIGHTPAREN ||
+    str === Punc.QUESTION
   );
 }
 
