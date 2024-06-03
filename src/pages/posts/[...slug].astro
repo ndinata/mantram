@@ -1,6 +1,7 @@
 ---
-import Hanzi from "@/components/hanzi.astro";
-import { parseMantramText } from "@/lib/parser";
+import { parseMantramString } from "mantram-parser";
+
+import PostChar from "@/components/post-char.astro";
 import { getPostsCollectionByPriority } from "@/lib/posts";
 import MantramPostLayout from "../_post-layout.astro";
 
@@ -33,7 +34,8 @@ export async function getStaticPaths() {
 }
 
 const { entry, prev, next } = Astro.props;
-const chars = parseMantramText(entry.body.trim());
+
+const chars = parseMantramString(entry.body.trimStart());
 ---
 
 <MantramPostLayout
@@ -42,13 +44,5 @@ const chars = parseMantramText(entry.body.trim());
   prev={prev}
   next={next}
 >
-  {
-    chars.map((char) =>
-      char.type === "linebr" ? (
-        <div class="flex h-1 w-full" />
-      ) : (
-        <Hanzi {...char} />
-      ),
-    )
-  }
+  {chars.map((char) => <PostChar char={char} />)}
 </MantramPostLayout>

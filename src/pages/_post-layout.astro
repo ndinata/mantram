@@ -1,9 +1,9 @@
 ---
 import { format } from "date-fns";
 import type { CollectionEntry } from "astro:content";
+import { parseMantramString } from "mantram-parser";
 
 import PostPager from "@/components/post-pager.astro";
-import { parseHanziCombo } from "@/lib/parser";
 import RootLayout from "./_root-layout.astro";
 
 export type NeighbourPost = {
@@ -22,11 +22,13 @@ type Props = {
 
 const { frontmatter, position, prev, next } = Astro.props;
 
-const titleChars = parseHanziCombo({
-  hanzis: frontmatter.title,
-  subs: frontmatter.subtitle,
-  pinyins: frontmatter.titlePinyin,
-});
+const titleChars = parseMantramString(
+  `${frontmatter.subtitle}\n${frontmatter.title}\n`,
+)
+  .filter((c) => c.type === "hanzi")
+  .map((c) => {
+    return c.type === "hanzi" ? { char: c.char, sub: c.sub } : undefined;
+  }) as { char: string; sub: string }[];
 
 const publishedDateStr = format(frontmatter.publishDate, "dd MMM yyyy");
 const lastUpdatedDateStr = format(frontmatter.lastUpdatedDate, "dd MMM yyyy");
@@ -41,13 +43,12 @@ const lastUpdatedDateStr = format(frontmatter.lastUpdatedDate, "dd MMM yyyy");
             <span class="text-lg">{position}.</span>
           </div>
           {
-            titleChars.map(({ char, sub, pinyin }) => (
+            titleChars.map(({ char, sub }) => (
               <div class="flex flex-col items-center">
-                <span>{pinyin || sub}</span>
+                <span>{sub}</span>
                 <span class="text-2xl font-normal text-muted-foreground">
                   {char}
                 </span>
-                {!!pinyin && <span>{sub}</span>}
               </div>
             ))
           }
