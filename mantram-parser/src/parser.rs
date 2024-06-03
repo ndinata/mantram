@@ -7,13 +7,14 @@ use nom::combinator::{map, map_res, recognize, value};
 use nom::multi::{many0, many_till, separated_list0};
 use nom::sequence::{delimited, terminated};
 use nom::IResult;
-use strum_macros::EnumString;
+use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(rename_all = "lowercase", tag = "type")]
 pub enum Character {
     Hanzi { char: char, sub: String },
-    Punc(Punctuation),
-    Context(String),
+    Punc { char: Punctuation },
+    Context { content: String },
     Linebreak,
 }
 
@@ -58,14 +59,19 @@ fn hanzi_line_chars<'a>(
 fn punc(input: &str) -> IResult<&str, Character> {
     let (input, p) = map_res(take(1usize), Punctuation::from_str)(input)?;
 
-    Ok((input, Character::Punc(p)))
+    Ok((input, Character::Punc { char: p }))
 }
 
 fn context(input: &str) -> IResult<&str, Character> {
     let (input, s) =
         recognize(delimited(tag("（"), take_until("）"), tag("）")))(input)?;
 
-    Ok((input, Character::Context(s.to_string())))
+    Ok((
+        input,
+        Character::Context {
+            content: s.to_string(),
+        },
+    ))
 }
 
 fn linebreak(input: &str) -> IResult<&str, Character> {
@@ -75,20 +81,39 @@ fn linebreak(input: &str) -> IResult<&str, Character> {
     )(input)
 }
 
-#[derive(Debug, Clone, PartialEq, EnumString, strum_macros::Display)]
+#[derive(
+    Debug,
+    Clone,
+    PartialEq,
+    strum_macros::EnumString,
+    strum_macros::Display,
+    Serialize,
+    Deserialize,
+)]
 #[non_exhaustive]
 pub enum Punctuation {
-    #[strum(serialize = "。")]
+    #[strum(to_string = "。")]
+    #[serde(rename = "。")]
     Period,
-    #[strum(serialize = "，")]
+
+    #[strum(to_string = "，")]
+    #[serde(rename = "，")]
     Comma,
-    #[strum(serialize = "、")]
+
+    #[strum(to_string = "、")]
+    #[serde(rename = "、")]
     DunComma,
-    #[strum(serialize = "：")]
+
+    #[strum(to_string = "：")]
+    #[serde(rename = "：")]
     Colon,
-    #[strum(serialize = "！")]
+
+    #[strum(to_string = "！")]
+    #[serde(rename = "！")]
     Exclamation,
-    #[strum(serialize = "？")]
+
+    #[strum(to_string = "？")]
+    #[serde(rename = "？")]
     Question,
 }
 
@@ -99,7 +124,89 @@ mod tests {
     use super::*;
 
     #[test]
-    fn parsing_mantram_string_works() {
+    fn parsing_single_block_mantram_string_works() {
+        let input = "om, siu to li, siu to li, siu mo li, so pho ho.
+唵，修多利，修多利，修摩利，娑婆訶。
+";
+
+        let expected = vec![
+            Character::Hanzi {
+                char: '唵',
+                sub: "om".to_string(),
+            },
+            Character::Punc {
+                char: Punctuation::Comma,
+            },
+            Character::Hanzi {
+                char: '修',
+                sub: "siu".to_string(),
+            },
+            Character::Hanzi {
+                char: '多',
+                sub: "to".to_string(),
+            },
+            Character::Hanzi {
+                char: '利',
+                sub: "li".to_string(),
+            },
+            Character::Punc {
+                char: Punctuation::Comma,
+            },
+            Character::Hanzi {
+                char: '修',
+                sub: "siu".to_string(),
+            },
+            Character::Hanzi {
+                char: '多',
+                sub: "to".to_string(),
+            },
+            Character::Hanzi {
+                char: '利',
+                sub: "li".to_string(),
+            },
+            Character::Punc {
+                char: Punctuation::Comma,
+            },
+            Character::Hanzi {
+                char: '修',
+                sub: "siu".to_string(),
+            },
+            Character::Hanzi {
+                char: '摩',
+                sub: "mo".to_string(),
+            },
+            Character::Hanzi {
+                char: '利',
+                sub: "li".to_string(),
+            },
+            Character::Punc {
+                char: Punctuation::Comma,
+            },
+            Character::Hanzi {
+                char: '娑',
+                sub: "so".to_string(),
+            },
+            Character::Hanzi {
+                char: '婆',
+                sub: "pho".to_string(),
+            },
+            Character::Hanzi {
+                char: '訶',
+                sub: "ho".to_string(),
+            },
+            Character::Punc {
+                char: Punctuation::Period,
+            },
+        ];
+
+        let (input, chars) = mantram_string(input).unwrap();
+
+        assert_eq!("", input);
+        assert_eq!(expected, chars);
+    }
+
+    #[test]
+    fn parsing_multi_block_mantram_string_works() {
         let input = "po jo po luo mi tuo sin cing.
 般若波羅蜜多心經。<br/>
 
@@ -140,7 +247,9 @@ kuan ce cai phu sat.
                 char: '經',
                 sub: "cing".to_string(),
             },
-            Character::Punc(Punctuation::Period),
+            Character::Punc {
+                char: Punctuation::Period,
+            },
             Character::Linebreak,
             Character::Hanzi {
                 char: '觀',
@@ -162,7 +271,9 @@ kuan ce cai phu sat.
                 char: '薩',
                 sub: "sat".to_string(),
             },
-            Character::Punc(Punctuation::Period),
+            Character::Punc {
+                char: Punctuation::Period,
+            },
         ];
 
         let (input, chars) = mantram_string(input).unwrap();
@@ -173,10 +284,10 @@ kuan ce cai phu sat.
 
     #[test]
     fn parsing_subtitle_line_works() {
-        let input = "ciu hu shan sin ..., yi shen li khu nan.\n";
+        let input = "ciu hu shan sin ..., yi shen li khu nan.\n唵。";
         let (input, subs) = subtitle_line(input).unwrap();
 
-        assert_eq!("", input);
+        assert_eq!("唵。", input);
         assert_eq!(
             vec!["ciu", "hu", "shan", "sin", "yi", "shen", "li", "khu", "nan"],
             subs
@@ -210,8 +321,12 @@ kuan ce cai phu sat.
                     char: '信',
                     sub: "sin".to_string()
                 },
-                Character::Context("（念自己的名字）".to_string()),
-                Character::Punc(Punctuation::Comma),
+                Character::Context {
+                    content: "（念自己的名字）".to_string()
+                },
+                Character::Punc {
+                    char: Punctuation::Comma
+                },
                 Character::Hanzi {
                     char: '一',
                     sub: "yi".to_string()
@@ -232,29 +347,31 @@ kuan ce cai phu sat.
                     char: '難',
                     sub: "nan".to_string()
                 },
-                Character::Punc(Punctuation::Period)
+                Character::Punc {
+                    char: Punctuation::Period
+                }
             ],
             chars
         );
     }
 
     #[rstest]
-    #[case("。", Character::Punc(Punctuation::Period))]
-    #[case("，", Character::Punc(Punctuation::Comma))]
-    #[case("、", Character::Punc(Punctuation::DunComma))]
-    #[case("：", Character::Punc(Punctuation::Colon))]
-    #[case("！", Character::Punc(Punctuation::Exclamation))]
-    #[case("？", Character::Punc(Punctuation::Question))]
+    #[case("。", Character::Punc { char: Punctuation::Period })]
+    #[case("，", Character::Punc { char: Punctuation::Comma })]
+    #[case("、", Character::Punc { char: Punctuation::DunComma })]
+    #[case("：", Character::Punc { char: Punctuation::Colon })]
+    #[case("！", Character::Punc { char: Punctuation::Exclamation })]
+    #[case("？", Character::Punc { char: Punctuation::Question })]
     #[should_panic]
-    #[case(".", Character::Punc(Punctuation::Period))]
+    #[case(".", Character::Punc { char: Punctuation::Period })]
     #[should_panic]
-    #[case(",", Character::Punc(Punctuation::Period))]
+    #[case(",", Character::Punc { char: Punctuation::Period })]
     #[should_panic]
-    #[case(":", Character::Punc(Punctuation::Period))]
+    #[case(":", Character::Punc { char: Punctuation::Period })]
     #[should_panic]
-    #[case("!", Character::Punc(Punctuation::Period))]
+    #[case("!", Character::Punc { char: Punctuation::Period })]
     #[should_panic]
-    #[case("?", Character::Punc(Punctuation::Period))]
+    #[case("?", Character::Punc { char: Punctuation::Period })]
     fn parsing_punc_works(#[case] input: &str, #[case] expected: Character) {
         let (i, char) = punc(input).unwrap();
 
@@ -269,7 +386,12 @@ kuan ce cai phu sat.
         let (i, char) = context(input).unwrap();
 
         assert_eq!("", i);
-        assert_eq!(Character::Context(input.to_string()), char);
+        assert_eq!(
+            Character::Context {
+                content: input.to_string()
+            },
+            char
+        );
     }
 
     #[rstest]
