@@ -12,6 +12,7 @@ use nom::IResult;
 use serde::Serialize;
 use tsify::Tsify;
 
+/// Possible characters in a mantram string.
 #[derive(Debug, Clone, PartialEq, Serialize, Tsify)]
 #[serde(rename_all = "lowercase", tag = "type")]
 #[tsify(into_wasm_abi)]
@@ -22,12 +23,18 @@ pub enum Character {
     Linebreak,
 }
 
+/// Parses the list of characters in a full mantram string.
+///
+/// A mantram string consists of one or more blocks of the subtitle + hanzi lines.
+///
+/// NOTE: the end of the string needs to have a newline (`\n`).
 pub fn mantram_string(input: &str) -> IResult<&str, Vec<Character>> {
     let (input, chars) = separated_list0(tag("\n"), block_characters)(input)?;
 
     Ok((input, chars.into_iter().flatten().collect()))
 }
 
+/// Parses the characters in the block (group of subtitle + hanzi lines).
 fn block_characters(input: &str) -> IResult<&str, Vec<Character>> {
     let (input, subs) = subtitle_line(input)?;
 
