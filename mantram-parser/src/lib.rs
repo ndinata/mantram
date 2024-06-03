@@ -2,35 +2,45 @@ use std::str::FromStr;
 use std::string::ToString;
 
 use nom::branch::alt;
-use nom::bytes::complete::{tag, take, take_until};
-use nom::character::complete::line_ending;
-use nom::combinator::{map_res, opt, recognize, value};
-use nom::multi::separated_list0;
-use nom::sequence::{delimited, preceded, tuple};
+use nom::bytes::complete::{tag, take, take_until, take_while};
+use nom::character::complete::{alpha1, line_ending, multispace0};
+use nom::combinator::{map_res, recognize, value};
+use nom::multi::{many_till, separated_list0};
+use nom::sequence::{delimited, terminated};
 use nom::IResult;
 use strum_macros::EnumString;
 // use wasm_bindgen::prelude::*;
 
 pub fn parse_mantram_string(input: &str) -> Result<Vec<Character>, String> {
-    let (_, chars) = separated_list0(tag("\n\n"), parse_triples)(input)
+    let (_, chars) = separated_list0(tag("\n"), block_characters)(input)
         .or(Err("parsing failed".to_string()))?;
 
     Ok(chars.into_iter().flatten().collect())
 }
 
-fn parse_triples(input: &str) -> IResult<&str, Vec<Character>> {
-    let (input, (subs, hanzis, pinyins)) =
-        tuple((parse_line, parse_line, opt(parse_line)))(input)?;
+fn block_characters(input: &str) -> IResult<&str, Vec<Character>> {
+    let (input, subs) = subtitle_line(input)?;
 
-    if let Some(pinyins) = pinyins {
-        todo!()
-    }
-
-    Ok((input, vec![]))
+    hanzi_line_chars(input, subs)
 }
 
-fn parse_line(input: &str) -> IResult<&str, &str> {
-    preceded(opt(line_ending), take_until("\n"))(input)
+fn subtitle_line(input: &str) -> IResult<&str, Vec<&str>> {
+    fn non_alpha(i: &str) -> IResult<&str, &str> {
+        take_while(|c: char| !c.is_alphabetic() && c != '\n')(i)
+    }
+
+    terminated(separated_list0(non_alpha, alpha1), multispace0)(input)
+}
+
+fn hanzi_line_chars<'a>(
+    input: &'a str,
+    subs: Vec<&'a str>,
+) -> IResult<&'a str, Vec<Character>> {
+    let (input, chars) = many_till(take(1usize), line_ending)(input)?;
+
+    // TODO
+
+    Ok((input, vec![]))
 }
 
 fn punc(input: &str) -> IResult<&str, Character> {
@@ -55,22 +65,18 @@ fn linebreak(input: &str) -> IResult<&str, Character> {
 
 #[derive(Debug, Clone, PartialEq)]
 pub enum Character {
-    Hanzi(Hanzi),
+    Hanzi {
+        char: &'static str,
+        sub: &'static str,
+    },
     Punc(Punctuation),
     Context(String),
     Linebreak,
 }
 
-#[derive(Debug, Clone, PartialEq)]
-struct Hanzi {
-    char: String,
-    sub: String,
-    pinyin: Option<String>,
-}
-
 #[derive(Debug, Clone, PartialEq, EnumString, strum_macros::Display)]
 #[non_exhaustive]
-enum Punctuation {
+pub enum Punctuation {
     #[strum(serialize = "。")]
     Period,
     #[strum(serialize = "，")]
@@ -93,15 +99,139 @@ mod tests {
 
     #[test]
     fn parsing_mantram_string_works() {
-        let input =
-            "na mo ciu khu ciu nan kuan she yin phu sat. pai chien wan yi fo.
-南無救苦救難觀世音菩薩。百千萬億佛。
+        let input = "po jo po luo mi tuo sin cing.
+般若波羅蜜多心經。<br/>
 
-heng he sha shu fo. u liang kung te fo.
-恒河沙數佛。無量功德佛。
+kuan ce cai phu sat.
+觀自在菩薩。
 ";
 
-        assert!(parse_mantram_string(input).is_ok());
+        let expected = vec![
+            Character::Hanzi {
+                char: "般",
+                sub: "po",
+            },
+            Character::Hanzi {
+                char: "若",
+                sub: "jo",
+            },
+            Character::Hanzi {
+                char: "波",
+                sub: "po",
+            },
+            Character::Hanzi {
+                char: "羅",
+                sub: "luo",
+            },
+            Character::Hanzi {
+                char: "蜜",
+                sub: "mi",
+            },
+            Character::Hanzi {
+                char: "多",
+                sub: "tuo",
+            },
+            Character::Hanzi {
+                char: "心",
+                sub: "sin",
+            },
+            Character::Hanzi {
+                char: "經",
+                sub: "cing",
+            },
+            Character::Punc(Punctuation::Period),
+            Character::Linebreak,
+            Character::Hanzi {
+                char: "觀",
+                sub: "kuan",
+            },
+            Character::Hanzi {
+                char: "自",
+                sub: "ce",
+            },
+            Character::Hanzi {
+                char: "在",
+                sub: "cai",
+            },
+            Character::Hanzi {
+                char: "菩",
+                sub: "phu",
+            },
+            Character::Hanzi {
+                char: "薩",
+                sub: "sat",
+            },
+            Character::Punc(Punctuation::Period),
+        ];
+
+        let chars = parse_mantram_string(input);
+        assert!(chars.is_ok());
+        assert_eq!(expected, chars.unwrap());
+    }
+
+    #[test]
+    fn parsing_subtitle_line_works() {
+        let input = "ciu hu shan sin ..., yi shen li khu nan.\n";
+        let (_, subs) = subtitle_line(input).unwrap();
+
+        assert_eq!(
+            vec!["ciu", "hu", "shan", "sin", "yi", "shen", "li", "khu", "nan"],
+            subs
+        );
+    }
+
+    #[test]
+    fn parsing_hanzi_line_chars_works() {
+        let input = "ciu hu shan sin ..., yi shen li khu nan.
+救護善信（念自己的名字），一身離苦難。
+";
+        let (input, subs) = subtitle_line(input).unwrap();
+        let (_, chars) = hanzi_line_chars(input, subs).unwrap();
+
+        assert_eq!(
+            vec![
+                Character::Hanzi {
+                    char: "救",
+                    sub: "ciu"
+                },
+                Character::Hanzi {
+                    char: "護",
+                    sub: "hu"
+                },
+                Character::Hanzi {
+                    char: "善",
+                    sub: "shan"
+                },
+                Character::Hanzi {
+                    char: "信",
+                    sub: "sin"
+                },
+                Character::Context("（念自己的名字）".to_string()),
+                Character::Punc(Punctuation::Comma),
+                Character::Hanzi {
+                    char: "一",
+                    sub: "yi"
+                },
+                Character::Hanzi {
+                    char: "身",
+                    sub: "shen"
+                },
+                Character::Hanzi {
+                    char: "離",
+                    sub: "li"
+                },
+                Character::Hanzi {
+                    char: "苦",
+                    sub: "khu"
+                },
+                Character::Hanzi {
+                    char: "難",
+                    sub: "nan"
+                },
+                Character::Punc(Punctuation::Period)
+            ],
+            chars
+        );
     }
 
     #[rstest]
