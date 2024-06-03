@@ -35,7 +35,7 @@ wen su she li fa wang ce. a yi tuo phu sat. chien thuo he thi phu sat. chang cin
 文殊師利法王子。阿逸多菩薩。乾陀訶提菩薩。常精進菩薩。
 
 yi ju she teng cu ta phu sat. ci she thi huan yin teng. u liang cu thien ta cung ci.
-與如是等諸大菩薩。及釋提桓因等。無量諸天大眾俱。</br>
+與如是等諸大菩薩。及釋提桓因等。無量諸天大眾俱。<br/>
 
 er she fo kao cang lao se li fu. chung she si fang. kuo she wan yi fo thu.
 爾時佛告長老舍利弗。從是西方。過十萬億佛土。
