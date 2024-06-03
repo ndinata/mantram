@@ -13,8 +13,9 @@ For suggestions/corrections feel free to open an issue or email me :)
 ## tech stack
 
 The site is built with the lovely [Astro](https://astro.build) framework and
-React + [shadcn](https://ui.shadcn.com) UI components, and is deployed on GitHub Pages.
-The [mantram parser](./mantram-parser/) is implemented in Rust (exposed via Wasm).
+[shadcn-ui](https://ui.shadcn.com) React components, and is deployed on GitHub
+Pages. The [mantram parser](./mantram-parser/) is implemented in Rust (exposed
+via [wasm](https://github.com/Menci/vite-plugin-wasm)).
 
 To run the project locally, you need to have the following installed:
 

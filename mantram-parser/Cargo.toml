@@ -6,6 +6,7 @@ description = "wasm parser library for the posts on https://mantram.blog."
 edition = "2021"
 homepage = "https://github.com/ndinata/mantram"
 publish = false
+readme = "README.md"
 repository = "https://github.com/ndinata/mantram"
 
 [lib]
