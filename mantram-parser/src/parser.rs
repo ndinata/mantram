@@ -1,3 +1,5 @@
+#![allow(non_snake_case, clippy::empty_docs)]
+
 use std::str::FromStr;
 
 use nom::branch::alt;
@@ -7,10 +9,12 @@ use nom::combinator::{map, map_res, recognize, value};
 use nom::multi::{many0, many_till, separated_list0};
 use nom::sequence::{delimited, terminated};
 use nom::IResult;
-use serde::{Deserialize, Serialize};
+use serde::Serialize;
+use tsify::Tsify;
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Serialize, Tsify)]
 #[serde(rename_all = "lowercase", tag = "type")]
+#[tsify(into_wasm_abi)]
 pub enum Character {
     Hanzi { char: char, sub: String },
     Punc { char: Punctuation },
@@ -81,6 +85,7 @@ fn linebreak(input: &str) -> IResult<&str, Character> {
     )(input)
 }
 
+#[non_exhaustive]
 #[derive(
     Debug,
     Clone,
@@ -88,9 +93,9 @@ fn linebreak(input: &str) -> IResult<&str, Character> {
     strum_macros::EnumString,
     strum_macros::Display,
     Serialize,
-    Deserialize,
+    Tsify,
 )]
-#[non_exhaustive]
+#[tsify(into_wasm_abi)]
 pub enum Punctuation {
     #[strum(to_string = "。")]
     #[serde(rename = "。")]
