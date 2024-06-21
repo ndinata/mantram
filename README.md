@@ -1,12 +1,12 @@
 # mantram 📿
 
-[mantram.blog](https://mantram.blog/) is a mobile-friendly library/compilation of
+[mantram.blog](https://mantram.blog/) is a mobile-friendly compilation of
 various Buddhist mantrams/suttas (真言).
 
-I built this site so that my family and friends have an easier time reciting mantrams
-on their phones. No more having to zoom in and out of blurry photos of book pages!
+I built this site so that my family can recite mantrams on their phones more
+easily. No more having to zoom and pan across blurry photos of book pages!
 
-All the mantrams are available as Markdown files in [src/content/posts](./src/content/posts/).
+All mantrams are available as Markdown files in [src/content/posts](./src/content/posts/).
 
 For suggestions/corrections feel free to open an issue or email me :)
 
@@ -14,8 +14,7 @@ For suggestions/corrections feel free to open an issue or email me :)
 
 The site is built with the lovely [Astro](https://astro.build) framework and
 [shadcn-ui](https://ui.shadcn.com) React components, and is deployed on GitHub
-Pages. The [mantram parser](./mantram-parser/) is implemented in Rust (exposed
-via [wasm](https://github.com/Menci/vite-plugin-wasm)).
+Pages. The [parser](./mantram-parser/) is implemented in Rust (exposed via wasm).
 
 To run the project locally, you need to have the following installed:
 
