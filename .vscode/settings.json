@@ -6,6 +6,7 @@
     "typescriptreact",
     "astro"
   ],
-  "eslint.experimental.useFlatConfig": true,
-  "[astro]": {"editor.defaultFormatter": "esbenp.prettier-vscode"}
+  "eslint.useFlatConfig": true,
+  "prettier.documentSelectors": ["**/*.astro"],
+  "[astro]": { "editor.defaultFormatter": "esbenp.prettier-vscode" }
 }
