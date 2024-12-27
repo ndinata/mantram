@@ -1,0 +1,3 @@
+* -linguist-detectable
+src/**/*.{astro,ts,tsx,js,jsx} linguist-detectable
+mantram-parser/**/*.rs linguist-detectable
